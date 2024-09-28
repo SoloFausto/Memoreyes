@@ -1,6 +1,9 @@
 ﻿@page "/"
+@using Azure;
+@using Azure.AI.FormRecognizer.DocumentAnalysis;
+@using dotenv.net
 @rendermode InteractiveServer
-@inject IWebHostEnvironment Environment
+@inject IWebHostEnvironment FileEnvironment
 
 <PageTitle>MemorEyes</PageTitle>
 
@@ -42,6 +45,7 @@ else {
 
 @code {
     private List<IBrowserFile> loadedFiles = new();
+
     private long maxFileSize = 20971520;
     private int maxAllowedFiles = 3;
     private bool isLoading;
@@ -54,8 +58,8 @@ else {
 
         foreach (var file in e.GetMultipleFiles(maxAllowedFiles)) {
             try {
-                var path = Path.Combine(Environment.ContentRootPath,
-                    Environment.EnvironmentName, "unsafe_uploads", file.Name);
+                var path = Path.Combine(FileEnvironment.ContentRootPath,
+                    FileEnvironment.EnvironmentName, "unsafe_uploads", file.Name);
                 await using FileStream writeStream = new(path, FileMode.Create);
                 using var readStream = file.OpenReadStream(maxFileSize);
                 var bytesRead = 0;
@@ -77,7 +81,18 @@ else {
                 Console.WriteLine(ex);
             }
         }
-
+        OCRLand();
         isLoading = false;
+    }
+    private async void OCRLand() {
+        var root = Directory.GetCurrentDirectory();
+        var dotenv = Path.Combine(root, ".env");
+
+        DotEnv.Load(options: new DotEnvOptions(envFilePaths: new[] {dotenv}));
+        var envVars = DotEnv.Read();
+
+        Console.WriteLine(envVars["key"]);
+
+        Console.WriteLine(envVars["endpoint"]);
     }
 }

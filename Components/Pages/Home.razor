@@ -2,12 +2,13 @@
 @rendermode InteractiveServer
 @inject IWebHostEnvironment Environment
 
-<PageTitle>File Upload 3</PageTitle>
+<PageTitle>MemorEyes</PageTitle>
 
-<h1>File Upload Example 3</h1>
+<h1>MemorEyes Flashcard Generator</h1>
 
 <p>
-    Max file size: @maxFileSize
+    Please upload your notes or take a picture.<br>
+    Max file size: @maxFileSize bytes
 </p>
 
 <p>
@@ -16,7 +17,7 @@
 
 <p>
     <label>
-        Upload up to @maxAllowedFiles of up to @maxFileSize bytes:
+        Upload up to @maxAllowedFiles files of up to @maxFileSize bytes each:
         <InputFile OnChange="LoadFiles" multiple />
     </label>
 </p>

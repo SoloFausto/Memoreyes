@@ -21,6 +21,7 @@ main {
         white-space: nowrap;
         margin-left: 1.5rem;
         text-decoration: none;
+        bottom: 0px;
     }
 
     .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {

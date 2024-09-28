@@ -7,15 +7,12 @@
 
 <PageTitle>MemorEyes</PageTitle>
 
-<h1>MemorEyes Flashcard Generator</h1>
+<div style="text-align: center;">
+    <h1 style=""><b>MemorEyes Flashcard Generator</b></h1>
+</div>
 
 <p>
-    Please upload your notes or take a picture.<br>
-    Max file size: @maxFileSize bytes
-</p>
-
-<p>
-    Max allowed files: @maxAllowedFiles
+    Please upload your notes or take a picture.
 </p>
 
 <p>
@@ -23,6 +20,11 @@
         Upload up to @maxAllowedFiles files of up to @maxFileSize bytes each:
         <InputFile OnChange="LoadFiles" multiple />
     </label>
+</p>
+
+<p>
+    Max file size: @maxFileSize bytes<br>
+    Max allowed files: @maxAllowedFiles
 </p>
 
 @if (isLoading) {

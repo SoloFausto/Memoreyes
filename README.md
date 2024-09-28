@@ -1,4 +1,4 @@
-### MemorEyes
+# MemorEyes
 MemorEyes scans a photo of notes uploaded by the user, and creates flashcards of important terms and their definitions.
 
 # How MemorEyes Does That

@@ -32,25 +32,6 @@
 </div>
 
 
-@if (isLoading) {
-    <p>Progress: @string.Format("{0:P0}", progressPercent)</p>
-    <p>Please wait...</p>
-}
-else {
-    <ul>
-        @foreach (var file in loadedFiles) {
-            <li>
-                <ul>
-                    <li>Name: @file.Name</li>
-                    <li>Last modified: @file.LastModified.ToString()</li>
-                    <li>Size (bytes): @file.Size</li>
-                    <li>Content type: @file.ContentType</li>
-                </ul>
-            </li>
-        }
-    </ul>
-}
-
 @code {
     private long maxFileSize = 4000000;
     private int maxAllowedFiles = 3;

@@ -88,6 +88,7 @@
     }
     private async void removeFlashCard(string flashcardName) {
         generatedFlashCards.Remove(generatedFlashCards.Find(x => x.Title.Contains(flashcardName)));
+        localStorage.SetItemAsync<List<FlashCard>>("generatedFlashCards", generatedFlashCards);
     }
     private async void OCRLand() {
         String OCRResult = "";

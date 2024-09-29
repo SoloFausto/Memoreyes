@@ -1,4 +1,4 @@
-﻿@page "/review-flashcards/{Value}"
+﻿@page "/review-flashcards"
 @using SixLabors.ImageSharp;
 @using SixLabors.ImageSharp.Drawing;
 @using SixLabors.ImageSharp.Drawing.Processing;
@@ -12,23 +12,26 @@
 <h3>Review Flashcards</h3>
 
 <button @onclick="DecreaseImage"> -- </button> <button @onclick="IncreaseImage">++</button>
-<Slide color='@loadedFlashCards.ElementAt(currentImagePosition).Color' content="@StringContent" OnClickCallback="ChangeContent"/>
+@if(loadedFlashCards.Count != 0) {
+    <Slide color='@loadedFlashCards.ElementAt(currentImagePosition).Color' content="@StringContent" OnClickCallback="ChangeContent" />
+}
+
 @code {
     int currentImagePosition = 0;
     String StringContent = "";
-    List<FlashCard>? loadedFlashCards;
-    [Parameter]
+    List<FlashCard> loadedFlashCards = new List<FlashCard>();
     public String Value { get; set; }
 
     protected override void OnInitialized() {
-        loadedFlashCards = JsonSerializer.Deserialize<List<FlashCard>>(Value);
-        StringContent = loadedFlashCards.ElementAt(currentImagePosition).Title;
+        // loadedFlashCards = JsonSerializer.Deserialize<List<FlashCard>>(Value);
         StateHasChanged();
     }
     protected override async void OnAfterRender(bool firstRender) {
         if (firstRender) {  
 
-            // loadedFlashCards = await localStorage.GetItemAsync<List<FlashCard>>("generatedFlashCards");
+            loadedFlashCards = await localStorage.GetItemAsync<List<FlashCard>>("generatedFlashCards");
+            StringContent = loadedFlashCards.ElementAt(currentImagePosition).Title;
+
             foreach (var card in loadedFlashCards) {
                 var rand = new Random();
                 var r = (byte)rand.Next(0, 127);

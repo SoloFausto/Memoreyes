@@ -77,7 +77,7 @@
     private void ReviewSlides() {
         string json = JsonSerializer.Serialize(generatedFlashCards);
 
-        NavManager.NavigateTo($"/review-flashcards/{json}");
+        NavManager.NavigateTo($"/review-flashcards");
     }
     private async void removeFlashCard(string flashcardName) {
         generatedFlashCards.Remove(generatedFlashCards.Find(x => x.Title.Contains(flashcardName)));
@@ -107,7 +107,7 @@
 
     private async void GPTLand(IDictionary<string, string> envVars, string OCRResult) {
 
-        StreamReader sr = new StreamReader(FileEnvironment.ContentRootPath + @"\prompt.txt");
+        StreamReader sr = new StreamReader(FileEnvironment.ContentRootPath+@"\prompt.txt");
         String prompt = sr.ReadToEnd() + OCRResult;
 
 

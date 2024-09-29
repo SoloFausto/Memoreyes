@@ -1,5 +1,7 @@
 using Blazored.LocalStorage;
 using Memoreyes.Components;
+using Microsoft.Extensions.FileProviders;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,11 @@ builder.Services.AddBlazoredLocalStorage();
 
 
 var app = builder.Build();
+app.UseStaticFiles(new StaticFileOptions {
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, builder.Environment.EnvironmentName, "unsafe_uploads")),
+    RequestPath = "/unsafe_uploads"
+});
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment()) {

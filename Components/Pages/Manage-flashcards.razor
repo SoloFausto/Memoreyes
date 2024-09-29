@@ -10,36 +10,71 @@
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 
 <h3>Component</h3>
-<div style ="display:flex; flex-direction:row">
-    <div class="images">
-        <img src="#" alt="Alternate Text" />
-        <img src="#" alt="Alternate Text" />
-        <img src="#" alt="Alternate Text" />
+<div style="height: 85vh;display:flex;flex-direction:row">
+    <div class="images" style="">
+        <a href="#">
+            @if (loadedFilePaths.Any())
+            {
+                <img src="@loadedFilePaths.First()" alt="Alternate Text" style="height:100%" />
+            }
+        </a>
+        
     </div>
-    <div style="display:flex; flex-direction:row">
-        <div style="display:flex; flex-direction:column-reverse">
-            <button></button>
+    <div style="display:flex;flex-direction:row;flex-grow: 1;">
+        <div style="display:flex;flex-direction:column-reverse;flex-grow: 1; justify-content: center;">
+            <button style="height: 50px;margin-bottom: 25px;margin-left: 25px;" disabled="@flashCardButtonDisabled">@flashCardButtonText</button>
         </div>
-        <div style="display:flex; flex-direction:column">
-            <p>Words</p>
-            <div style ="display:flex; flex-direction:column"></div>
+        <div style="display:flex;flex-direction:column;flex-grow: 1;align-items: center;">
+            <p>All the Generated Flashcards:</p>
+            <table style="border: black;border-width: 5px;">
+                @if (generatedFlashCards.Count != 0) {
+                    foreach (var flashCard in generatedFlashCards) {
+                    <tr>
+                        <th>@flashCard.Title</th>
+                        <th>
+                                <button @onclick="@(()=>removeFlashCard(flashCard.Title))"></button>
+                        </th>
+                            
+                    </tr>
+                    }
+                }
+            </table>
         </div>
     </div>
 </div>
 
+
 @code {
-    private List<String> loadedFiles { get; set; }
+    protected bool flashCardButtonDisabled { get; set; }
+    protected string flashCardButtonText { get; set; }
+    private List<String> loadedFiles;
+    private List<String> loadedFilePaths = new List<string>();
     private List<FlashCard> generatedFlashCards = new List<FlashCard>();
 
+    protected override void OnInitialized() {
+        base.OnInitialized();
+    }
     protected override async void OnAfterRender(bool firstRender) {
         if (firstRender) {
+            flashCardButtonDisabled = true;
+            flashCardButtonText = "Flashcards are being created...";
             string? loadedJson = await localStorage.GetItemAsStringAsync("loadedFiles");
             loadedFiles = JsonSerializer.Deserialize<List<String>>(loadedJson);
             if (loadedFiles != null) {
+                foreach (var filename in loadedFiles) {
+
+                    loadedFilePaths.Add("/unsafe_uploads/" + filename);
+                }
+                StateHasChanged();
                 OCRLand();
+
             }
         }
 
+
+    }
+    private async void removeFlashCard(string flashcardName) {
+        generatedFlashCards.Remove(generatedFlashCards.Find(x => x.Title.Contains(flashcardName)));
     }
     private async void OCRLand() {
         String OCRResult = "";
@@ -85,6 +120,11 @@
             var currentDescriptionMatch = descriptionMatches[i].Groups[0].Value;
             generatedFlashCards.Add(new FlashCard(currentTitleMatch, currentDescriptionMatch));
         }
+        flashCardButtonDisabled = false;
+        flashCardButtonText = "FlashCards are ready!";
+        localStorage.ClearAsync();
 
+        StateHasChanged();
+        
     }
 }

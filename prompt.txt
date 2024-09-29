@@ -7,3 +7,4 @@ For example, “Water: (H2O) makes up oseans”, you would return:
 If you decide to correct anything or make any changes, do not 
 add anything at the end of what you return. Never include anything else 
 than the term after “T:” and the definition after “D:”.
+Create the flash cards for the following text: 

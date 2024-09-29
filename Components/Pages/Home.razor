@@ -2,6 +2,7 @@
 @using Azure;
 @using Azure.AI.FormRecognizer.DocumentAnalysis;
 @using dotenv.net
+@using OpenAI.Chat
 @rendermode InteractiveServer
 @inject IWebHostEnvironment FileEnvironment
 
@@ -54,6 +55,7 @@ else {
     private decimal progressPercent;
 
     private async Task LoadFiles(InputFileChangeEventArgs e) {
+        Console.WriteLine(FileEnvironment.ContentRootPath);
         isLoading = true;
         loadedFiles.Clear();
         progressPercent = 0;
@@ -87,9 +89,9 @@ else {
         isLoading = false;
     }
     private async void OCRLand() {
+        String OCRResult = "";
         var root = Directory.GetCurrentDirectory();
         var dotenv = Path.Combine(root, ".env");
-
         DotEnv.Load(options: new DotEnvOptions(envFilePaths: new[] {dotenv}));
         var envVars = DotEnv.Read();
         AzureKeyCredential credential = new AzureKeyCredential(envVars["key"]);
@@ -99,9 +101,23 @@ else {
             FileStream fileObj = new FileStream(path,FileMode.Open,FileAccess.Read,FileShare.Read);
             AnalyzeDocumentOperation operation = client.AnalyzeDocument(WaitUntil.Completed, "prebuilt-read",fileObj);
             AnalyzeResult result = operation.Value;
-            Console.WriteLine(result.Content);
+            OCRResult += result.Content;
+            OCRResult += "\n";
         }
+        GPTLand(envVars,OCRResult);
 
+    }
+
+    private async void GPTLand(IDictionary<string, string> envVars, string OCRResult) {
+
+        StreamReader sr = new StreamReader(FileEnvironment.ContentRootPath+@"\prompt.txt");
+        String prompt = sr.ReadToEnd() + OCRResult;
+        
+
+        ChatClient client = new(model: "gpt-4o-mini", envVars["gptKey"]);
+        ChatCompletion completion = client.CompleteChat(prompt);
+
+        
 
     }
 }

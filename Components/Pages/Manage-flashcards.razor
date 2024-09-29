@@ -10,7 +10,22 @@
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 
 <h3>Component</h3>
-
+<div style ="display:flex; flex-direction:row">
+    <div class="images">
+        <img src="#" alt="Alternate Text" />
+        <img src="#" alt="Alternate Text" />
+        <img src="#" alt="Alternate Text" />
+    </div>
+    <div style="display:flex; flex-direction:row">
+        <div style="display:flex; flex-direction:column-reverse">
+            <button></button>
+        </div>
+        <div style="display:flex; flex-direction:column">
+            <p>Words</p>
+            <div style ="display:flex; flex-direction:column"></div>
+        </div>
+    </div>
+</div>
 
 @code {
     private List<String> loadedFiles { get; set; }

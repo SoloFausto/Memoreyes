@@ -11,17 +11,17 @@
 @inject NavigationManager NavManager
 
 <h3>Component</h3>
-<div style="height: 85vh;display:flex;flex-direction:row">
-    <div class="images" style="">
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;height: 85vh;display: flex;flex-direction: row;">
+    <div class="images" style="width: fit-content;height: fit-content;">
         
             @if (loadedFilePaths.Any())
             {
-                <img src="@loadedFilePaths.First()" alt="Alternate Text" style="width: 50%;" />
+            <img src="@loadedFilePaths.First()" alt="Alternate Text" style="width: 35%;" />
             }
         
         
     </div>
-    <div style="display:flex;flex-direction:row;flex-grow: 1;">
+    <div style="display:flex;flex-direction:row;flex-grow: 1; width: 50vw;">
         <div style="display:flex;flex-direction:column-reverse;flex-grow: 1; justify-content: center;">
             <button style="height: 50px;margin-bottom: 25px;margin-left: 25px;" @onclick="ReviewSlides" disabled="@flashCardButtonDisabled">@flashCardButtonText</button>
         </div>

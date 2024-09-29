@@ -9,19 +9,18 @@
 
 <PageTitle>MemorEyes</PageTitle>
 
-<div style="text-align: center;">
+<div style="text-align: center; " class="mainPageText">
     <img src="MemorEyes.png" alt="MemorEyes logo" style="max-width: 60%; height: auto;">
 </div>
 
-<p style="margin-top: 20px; margin-bottom: 20px;">
-    <div style="text-align: center;">
-        Upload your notes! Upload up to @maxAllowedFiles files of up to @maxFileSize bytes each:
-        <InputFile OnChange="LoadFiles" multiple />
-    </div>
-</p>
 
-<p>
-    Max file size: @maxFileSize bytes<br>
+<div style="text-align: center; font-family: Trebuchet MS; display: flex; flex-direction: column; align-items: center;">
+    <p style="margin-top: 20px; margin-bottom: 10px;">Upload your handwritten notes:</p>
+    <InputFile OnChange="LoadFiles" multiple style="margin-left: 75px;"/>
+</div>
+
+<p style="margin-top: 10px; text-align: center; font-family: Trebuchet MS; font-size: small;">
+    Max file size: 4 MB<br>
     Max allowed files: @maxAllowedFiles
 </p>
 

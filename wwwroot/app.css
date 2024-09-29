@@ -53,3 +53,30 @@ h1:focus {
 h1 {
     font-family: Garamond;
 }
+
+.popup {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 400px;
+}
+
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.flex-item {
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* Adjust to your needs */
+    margin: 0 10px;
+}
+
+.inner-item {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 4px;
+}

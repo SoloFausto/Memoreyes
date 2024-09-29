@@ -1,0 +1,68 @@
+﻿@page "/manage-flashcards"
+@using Azure;
+@using Azure.AI.FormRecognizer.DocumentAnalysis;
+@using dotenv.net
+@using OpenAI.Chat
+@using System.Text.RegularExpressions;
+@rendermode InteractiveServer
+@inject IWebHostEnvironment FileEnvironment
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<h3>Component</h3>
+
+@code {
+    private List<IBrowserFile> loadedFiles { get; set; }
+    private List<FlashCard> generatedFlashCards = new List<FlashCard>();
+
+    protected override async Task OnInitializedAsync() {
+        List<IBrowserFile>? loadedFiles = await localStorage.GetItemAsync<List<IBrowserFile>>("loadedFiles");
+        if (loadedFiles != null) {
+            OCRLand();
+        }
+    }
+    private async void OCRLand() {
+        String OCRResult = "";
+        var root = Directory.GetCurrentDirectory();
+        var dotenv = Path.Combine(root, ".env");
+        DotEnv.Load(options: new DotEnvOptions(envFilePaths: new[] { dotenv }));
+        var envVars = DotEnv.Read();
+        AzureKeyCredential credential = new AzureKeyCredential(envVars["key"]);
+        DocumentAnalysisClient client = new DocumentAnalysisClient(new Uri(envVars["endpoint"]), credential);
+        foreach (var file in loadedFiles) {
+            var path = Path.Combine(FileEnvironment.ContentRootPath, FileEnvironment.EnvironmentName, "unsafe_uploads", file.Name);
+            FileStream fileObj = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            AnalyzeDocumentOperation operation = client.AnalyzeDocument(WaitUntil.Completed, "prebuilt-read", fileObj);
+            AnalyzeResult result = operation.Value;
+            OCRResult += result.Content;
+            OCRResult += "\n";
+        }
+        Console.WriteLine(OCRResult);
+        Console.WriteLine("========================================");
+        GPTLand(envVars, OCRResult);
+
+    }
+
+    private async void GPTLand(IDictionary<string, string> envVars, string OCRResult) {
+
+        StreamReader sr = new StreamReader(FileEnvironment.ContentRootPath + @"\prompt.txt");
+        String prompt = sr.ReadToEnd() + OCRResult;
+
+
+        ChatClient client = new(model: "gpt-4o-mini", envVars["gptKey"]);
+        ChatCompletion completion = client.CompleteChat(prompt);
+        Console.WriteLine(completion);
+        FlashCardLand(completion.ToString());
+    }
+    private void FlashCardLand(String completion) {
+        string titleRegex = @"(?<=T:\s)[^D:]+(?=\sD:)";
+        string descriptionRegex = @"(?<=D:\s).*";
+        MatchCollection titleMatches = Regex.Matches(completion, titleRegex);
+        MatchCollection descriptionMatches = Regex.Matches(completion, descriptionRegex);
+        for (var i = 0; i < titleMatches.Count; i++) {
+            var currentTitleMatch = titleMatches[i].Groups[0].Value;
+            var currentDescriptionMatch = descriptionMatches[i].Groups[0].Value;
+            generatedFlashCards.Add(new FlashCard(currentTitleMatch, currentDescriptionMatch));
+        }
+
+    }
+}

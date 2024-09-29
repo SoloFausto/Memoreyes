@@ -13,8 +13,12 @@
 @if(loadedFlashCards.Count != 0) {
     <Slide color='@loadedFlashCards.ElementAt(currentImagePosition).Color' content="@StringContent" OnClickCallback="ChangeContent" />
 }
-<button @onclick="DecreaseImage"> -- </button>
-<button @onclick="IncreaseImage">++</button>
+<div style="display:flex; flex-direction:row;">
+    <button @onclick="DecreaseImage"> <img src="leftarrow.png" alt="Alternate Text" /> </button>
+    <button @onclick="IncreaseImage"><img src="rightarrow.png" alt="Alternate Text" /> </button>
+</div>
+
+
 
 @code {
     int currentImagePosition = 0;

@@ -24,8 +24,16 @@
     Max allowed files: @maxAllowedFiles
 </p>
 
+<div style="text-align: center;">
+    <a href="/manage-flashcards" style="margin-top: 50px; font-family: Trebuchet MS; display: inline-block; padding: 10px 20px; background-color: #94c6ff; color: white; text-align: center; text-decoration: none; border-radius: 5px;">
+        Submit
+    </a>
+</div>
+
+
 @if (isLoading) {
     <p>Progress: @string.Format("{0:P0}", progressPercent)</p>
+    <p>Please wait...</p>
 }
 else {
     <ul>

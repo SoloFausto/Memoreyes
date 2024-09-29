@@ -3,6 +3,7 @@
 @using Azure.AI.FormRecognizer.DocumentAnalysis;
 @using dotenv.net
 @using OpenAI.Chat
+@using System.Text.RegularExpressions;
 @rendermode InteractiveServer
 @inject IWebHostEnvironment FileEnvironment
 
@@ -53,9 +54,9 @@ else {
     private int maxAllowedFiles = 3;
     private bool isLoading;
     private decimal progressPercent;
+    private List<FlashCard> generatedFlashCards = new List<FlashCard>();
 
     private async Task LoadFiles(InputFileChangeEventArgs e) {
-        Console.WriteLine(FileEnvironment.ContentRootPath);
         isLoading = true;
         loadedFiles.Clear();
         progressPercent = 0;
@@ -104,6 +105,8 @@ else {
             OCRResult += result.Content;
             OCRResult += "\n";
         }
+        Console.WriteLine(OCRResult);
+        Console.WriteLine("========================================");
         GPTLand(envVars,OCRResult);
 
     }
@@ -112,12 +115,22 @@ else {
 
         StreamReader sr = new StreamReader(FileEnvironment.ContentRootPath+@"\prompt.txt");
         String prompt = sr.ReadToEnd() + OCRResult;
-        
+
 
         ChatClient client = new(model: "gpt-4o-mini", envVars["gptKey"]);
         ChatCompletion completion = client.CompleteChat(prompt);
-
-        
-
+        Console.WriteLine(completion);
+        FlashCardLand(completion.ToString());
+    }
+    private void FlashCardLand(String completion) {
+        string titleRegex = @"(?<=T:\s)[^D:]+(?=\sD:)";
+        string descriptionRegex = @"(?<=D:\s).*";
+        MatchCollection titleMatches = Regex.Matches(completion, titleRegex);
+        MatchCollection descriptionMatches = Regex.Matches(completion, descriptionRegex);
+        for(var i = 0; i < titleMatches.Count; i++) {
+            var currentTitleMatch = titleMatches[i].Groups[0].Value;
+            var currentDescriptionMatch = descriptionMatches[i].Groups[0].Value;
+            generatedFlashCards.Add(new FlashCard(currentTitleMatch, currentDescriptionMatch));
+        }
     }
 }

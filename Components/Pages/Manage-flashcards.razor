@@ -11,6 +11,7 @@
 
 <h3>Component</h3>
 
+
 @code {
     private List<String> loadedFiles { get; set; }
     private List<FlashCard> generatedFlashCards = new List<FlashCard>();
@@ -18,7 +19,7 @@
     protected override async void OnAfterRender(bool firstRender) {
         if (firstRender) {
             string? loadedJson = await localStorage.GetItemAsStringAsync("loadedFiles");
-            loadedFiles = JsonSerializer.Deserialize<List<IBrowserFile>>(loadedJson);
+            loadedFiles = JsonSerializer.Deserialize<List<String>>(loadedJson);
             if (loadedFiles != null) {
                 OCRLand();
             }
@@ -34,7 +35,7 @@
         AzureKeyCredential credential = new AzureKeyCredential(envVars["key"]);
         DocumentAnalysisClient client = new DocumentAnalysisClient(new Uri(envVars["endpoint"]), credential);
         foreach (var file in loadedFiles) {
-            var path = Path.Combine(FileEnvironment.ContentRootPath, FileEnvironment.EnvironmentName, "unsafe_uploads", file.Name);
+            var path = Path.Combine(FileEnvironment.ContentRootPath, FileEnvironment.EnvironmentName, "unsafe_uploads", file);
             FileStream fileObj = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
             AnalyzeDocumentOperation operation = client.AnalyzeDocument(WaitUntil.Completed, "prebuilt-read", fileObj);
             AnalyzeResult result = operation.Value;
@@ -44,6 +45,7 @@
         Console.WriteLine(OCRResult);
         Console.WriteLine("========================================");
 
+        GPTLand(envVars, OCRResult);
 
     }
 

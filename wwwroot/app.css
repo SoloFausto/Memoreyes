@@ -63,19 +63,19 @@ h1 {
     width: 400px;
 }
 
-.flex-container {
+.popup-flex-container {
     display: flex;
     justify-content: space-between;
 }
 
-.flex-item {
+.popup-flex-item {
     display: flex;
     flex-direction: column;
     flex: 1;
     margin: 0 10px;
 }
 
-.inner-item {
+.popup-inner-item {
     padding: 10px;
     margin: 5px 0;
     border-radius: 4px;

@@ -37,11 +37,12 @@
 
 @code {
     private long maxFileSize = 4000000;
-    private int maxAllowedFiles = 3;
+    private int maxAllowedFiles = 5;
     private List<String> loadedFiles = new();
-
+  
     private async Task LoadFiles(InputFileChangeEventArgs e) {
         loadedFiles.Clear();
+
 
         foreach (var file in e.GetMultipleFiles(maxAllowedFiles)) {
             try {
@@ -70,7 +71,7 @@
         await localStorage.SetItemAsStringAsync("loadedFiles", json);
     }
     private void ManageFlashCards() {
-        if(loadedFiles.Count != 0) {
+        if(loadedFiles.Count != 0 && loadedFiles.Count <= 5) {
             NavManager.NavigateTo($"/manage-flashcards");
         }
         

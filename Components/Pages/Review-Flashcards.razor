@@ -11,21 +11,18 @@
 
 <h3>Review Flashcards</h3>
 
-<button @onclick="DecreaseImage"> -- </button> <button @onclick="IncreaseImage">++</button>
+
 @if(loadedFlashCards.Count != 0) {
     <Slide color='@loadedFlashCards.ElementAt(currentImagePosition).Color' content="@StringContent" OnClickCallback="ChangeContent" />
 }
+<button @onclick="DecreaseImage"> -- </button>
+<button @onclick="IncreaseImage">++</button>
 
 @code {
     int currentImagePosition = 0;
     String StringContent = "";
     List<FlashCard> loadedFlashCards = new List<FlashCard>();
-    public String Value { get; set; }
 
-    protected override void OnInitialized() {
-        // loadedFlashCards = JsonSerializer.Deserialize<List<FlashCard>>(Value);
-        StateHasChanged();
-    }
     protected override async void OnAfterRender(bool firstRender) {
         if (firstRender) {  
 
@@ -43,10 +40,7 @@
                 card.Color = generatedColor;
                 StateHasChanged();
             }
-            foreach (var card in loadedFlashCards) {
-                Console.WriteLine(card.Title);
-
-            }
+            await localStorage.ClearAsync();
 
         }
 
@@ -69,7 +63,6 @@
             currentImagePosition = loadedFlashCards.Count-1;
         }
         StringContent = loadedFlashCards.ElementAt(currentImagePosition).Title;
-        Console.WriteLine(currentImagePosition);
         StateHasChanged();
   
     }
@@ -79,7 +72,6 @@
             currentImagePosition = 0;
         }
         StringContent = loadedFlashCards.ElementAt(currentImagePosition).Title;
-        Console.WriteLine(currentImagePosition);
         StateHasChanged();
     }
 

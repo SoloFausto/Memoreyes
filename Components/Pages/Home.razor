@@ -8,6 +8,8 @@
 @rendermode InteractiveServer
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject IWebHostEnvironment FileEnvironment
+@inject NavigationManager NavManager
+
 
 <PageTitle>MemorEyes</PageTitle>
 
@@ -27,18 +29,18 @@
 </p>
 
 <div style="text-align: center;">
-    <a href="/manage-flashcards" style="margin-top: 50px; font-family: Trebuchet MS; display: inline-block; padding: 10px 20px; background-color: #192779; color: white; text-align: center; text-decoration: none; border-radius: 5px;">
+    <button @onclick="ManageFlashCards" style="margin-top: 50px; font-family: Trebuchet MS; display: inline-block; padding: 10px 20px; background-color: #192779; color: white; text-align: center; text-decoration: none; border-radius: 5px;">
         Submit
-    </a>
+    </button>
 </div>
 
 
 @code {
     private long maxFileSize = 4000000;
     private int maxAllowedFiles = 3;
+    private List<String> loadedFiles = new();
 
     private async Task LoadFiles(InputFileChangeEventArgs e) {
-        List<String> loadedFiles = new();
         loadedFiles.Clear();
 
         foreach (var file in e.GetMultipleFiles(maxAllowedFiles)) {
@@ -67,5 +69,10 @@
         string json = JsonSerializer.Serialize(loadedFiles);
         await localStorage.SetItemAsStringAsync("loadedFiles", json);
     }
-    
+    private void ManageFlashCards() {
+        if(loadedFiles.Count != 0) {
+            NavManager.NavigateTo($"/manage-flashcards");
+        }
+        
+    }
 }

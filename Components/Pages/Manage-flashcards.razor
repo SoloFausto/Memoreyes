@@ -60,16 +60,23 @@
             flashCardButtonDisabled = true;
             flashCardButtonText = "Flashcards are being created...";
             string? loadedJson = await localStorage.GetItemAsStringAsync("loadedFiles");
-            loadedFiles = JsonSerializer.Deserialize<List<String>>(loadedJson);
+            try {
+                loadedFiles = JsonSerializer.Deserialize<List<String>>(loadedJson);
+            }
+            catch(Exception e) {
+                NavManager.NavigateTo($"/");
+            }
             if (loadedFiles != null) {
                 foreach (var filename in loadedFiles) {
 
                     loadedFilePaths.Add("/unsafe_uploads/" + filename);
                 }
+
                 StateHasChanged();
                 OCRLand();
-
             }
+            
+
         }
 
 

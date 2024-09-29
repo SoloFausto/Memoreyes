@@ -12,8 +12,6 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddHttpClient();
 builder.Services.AddBlazoredLocalStorage();
-builder.Services.AddWMBSC();
-
 
 
 

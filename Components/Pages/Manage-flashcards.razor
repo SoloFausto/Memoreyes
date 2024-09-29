@@ -8,6 +8,7 @@
 @rendermode InteractiveServer
 @inject IWebHostEnvironment FileEnvironment
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager NavManager
 
 <h3>Component</h3>
 <div style="height: 85vh;display:flex;flex-direction:row">
@@ -22,7 +23,7 @@
     </div>
     <div style="display:flex;flex-direction:row;flex-grow: 1;">
         <div style="display:flex;flex-direction:column-reverse;flex-grow: 1; justify-content: center;">
-            <button style="height: 50px;margin-bottom: 25px;margin-left: 25px;" disabled="@flashCardButtonDisabled">@flashCardButtonText</button>
+            <button style="height: 50px;margin-bottom: 25px;margin-left: 25px;" @onclick="ReviewSlides" disabled="@flashCardButtonDisabled">@flashCardButtonText</button>
         </div>
         <div style="display:flex;flex-direction:column;flex-grow: 1;align-items: center;">
             <p>All the Generated Flashcards:</p>
@@ -32,7 +33,7 @@
                     <tr>
                         <th>@flashCard.Title</th>
                         <th>
-                                <button @onclick="@(()=>removeFlashCard(flashCard.Title))"></button>
+                                <button @onclick="@(()=>removeFlashCard(flashCard.Title))"> <img src="nonchalanttrashcan.png" alt="Alternate Text" /></button>
                         </th>
                             
                     </tr>
@@ -73,6 +74,11 @@
 
 
     }
+    private void ReviewSlides() {
+        string json = JsonSerializer.Serialize(generatedFlashCards);
+
+        NavManager.NavigateTo($"/review-flashcards/{json}");
+    }
     private async void removeFlashCard(string flashcardName) {
         generatedFlashCards.Remove(generatedFlashCards.Find(x => x.Title.Contains(flashcardName)));
     }
@@ -92,8 +98,8 @@
             OCRResult += result.Content;
             OCRResult += "\n";
         }
-        Console.WriteLine(OCRResult);
-        Console.WriteLine("========================================");
+        System.Console.WriteLine(OCRResult);
+        System.Console.WriteLine("========================================");
 
         GPTLand(envVars, OCRResult);
 
@@ -107,7 +113,7 @@
 
         ChatClient client = new(model: "gpt-4o-mini", envVars["gptKey"]);
         ChatCompletion completion = client.CompleteChat(prompt);
-        Console.WriteLine(completion);
+        System.Console.WriteLine(completion);
         FlashCardLand(completion.ToString());
     }
     private void FlashCardLand(String completion) {
@@ -123,7 +129,7 @@
         flashCardButtonDisabled = false;
         flashCardButtonText = "FlashCards are ready!";
         localStorage.ClearAsync();
-
+        localStorage.SetItemAsync<List<FlashCard>>("generatedFlashCards", generatedFlashCards);
         StateHasChanged();
         
     }

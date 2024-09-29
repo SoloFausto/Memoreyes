@@ -1,0 +1,87 @@
+﻿@page "/review-flashcards/{Value}"
+@using SixLabors.ImageSharp;
+@using SixLabors.ImageSharp.Drawing;
+@using SixLabors.ImageSharp.Drawing.Processing;
+@using SixLabors.ImageSharp.PixelFormats;
+@using SixLabors.ImageSharp.Processing;
+@using System.Text.Json;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IWebHostEnvironment FileEnvironment
+@rendermode InteractiveServer
+
+<h3>Review Flashcards</h3>
+
+<button @onclick="DecreaseImage"> -- </button> <button @onclick="IncreaseImage">++</button>
+<Slide color='@loadedFlashCards.ElementAt(currentImagePosition).Color' content="@StringContent" OnClickCallback="ChangeContent"/>
+@code {
+    int currentImagePosition = 0;
+    String StringContent = "";
+    List<FlashCard>? loadedFlashCards;
+    [Parameter]
+    public String Value { get; set; }
+
+    protected override void OnInitialized() {
+        loadedFlashCards = JsonSerializer.Deserialize<List<FlashCard>>(Value);
+        StringContent = loadedFlashCards.ElementAt(currentImagePosition).Title;
+        StateHasChanged();
+    }
+    protected override async void OnAfterRender(bool firstRender) {
+        if (firstRender) {  
+
+            // loadedFlashCards = await localStorage.GetItemAsync<List<FlashCard>>("generatedFlashCards");
+            foreach (var card in loadedFlashCards) {
+                var rand = new Random();
+                var r = (byte)rand.Next(0, 127);
+                var g = (byte)rand.Next(0, 127);
+                var b = (byte)rand.Next(0, 127);
+
+                var generatedColor = new SixLabors.ImageSharp.Color(new Rgba32(r, g, b, 255)).ToHex();
+
+                card.Color = generatedColor;
+                StateHasChanged();
+            }
+            foreach (var card in loadedFlashCards) {
+                Console.WriteLine(card.Title);
+
+            }
+
+        }
+
+
+
+    }
+    private void ChangeContent() {
+        var title = loadedFlashCards.ElementAt(currentImagePosition).Title;
+        var description = loadedFlashCards.ElementAt(currentImagePosition).Description;
+        if (StringContent.Equals(title)) {
+            StringContent = description;
+        }
+        else {
+            StringContent = title;
+        }
+    }
+    private void DecreaseImage() {
+        currentImagePosition -= 1;
+        if(!(currentImagePosition > 0)) {
+            currentImagePosition = loadedFlashCards.Count-1;
+        }
+        StringContent = loadedFlashCards.ElementAt(currentImagePosition).Title;
+        Console.WriteLine(currentImagePosition);
+        StateHasChanged();
+  
+    }
+    private void IncreaseImage() {
+        currentImagePosition += 1;
+        if (!(currentImagePosition < loadedFlashCards.Count)) {
+            currentImagePosition = 0;
+        }
+        StringContent = loadedFlashCards.ElementAt(currentImagePosition).Title;
+        Console.WriteLine(currentImagePosition);
+        StateHasChanged();
+    }
+
+    
+
+
+
+}

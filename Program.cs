@@ -1,6 +1,8 @@
 using Blazored.LocalStorage;
+using Memoreyes;
 using Memoreyes.Components;
 using Microsoft.Extensions.FileProviders;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +12,9 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddHttpClient();
 builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddWMBSC();
+
+
 
 
 var app = builder.Build();
